@@ -1,0 +1,106 @@
+import random
+# exercise one : 
+"""
+print("---> Word indexing <---")
+word = input(">>> enter a word : ")
+print(f"---> first character : {word[0]} <---")
+print(f"---> last character : {word[-1]} <---")
+print(f"---> last character : {word[:3]} <---")
+print(f"---> three characters : {word[-3:]} <---")
+"""
+# exercise two :
+"""
+print("---> Secret code <---")
+word = input(">>> enter a word :  ")
+if len(word) < 4:
+    print("??? this word is too small ???")
+else :
+    first_words = word[:2]
+    last_words = word[-2:]
+
+new_password = first_words + last_words
+print(f"---> new word : {new_password} <---")
+"""
+# exercise three :
+"""
+print("----> Password strength <----")
+password = input(">>> enter the password : ")
+cmp = 0
+if len(password) >= 8:
+    cmp += 1
+if "@" in password or "#" in password or "!" in password:
+    cmp += 1 
+if " " not in password:
+    cmp += 1
+
+if cmp < 3:
+    print(f"---> {password} is weak <---")
+else:
+    print(f"---> {password} is strong <---")
+"""
+# project : to live is To growth :
+"""
+print("-----> To Live is To Growth <-----")
+print("---> Welcome , Adam <---")
+print("---> This is your growth system <---")
+print("--> Menu <--")
+print("--> 1. Study session <--")
+print("--> 2. Echo chamber <--")
+print("--> 3. Mood check <--")
+choice = int(input(">>> enter your choice : "))
+if choice == 1:
+    mintues = int(input(">>> enter how many minutes have you studied : "))
+    xp = mintues * 4
+    print(f"---> minutes studied : {mintues} <---")
+    print(f"---> You have gained {xp} XP in this study Session <---")
+elif choice == 2:
+    questions = [
+    "What did I learn today?",
+    "What emotion controlled me today?",
+    "What made me proud today?",
+    "What made me tired today?",
+    "What mistake can teach me something?",
+    "What am I avoiding right now?",
+    "What do I need to improve tomorrow?",
+    "What made me feel calm today?",
+    "What made me angry today?",
+    "What is one thing I am grateful for?",
+    "What thought kept repeating in my mind today?",
+    "Did I act like the person I want to become?",
+    "What was the best moment of my day?",
+    "What was the hardest moment of my day?",
+    "What do I need to forgive myself for?",
+    "What did I do today that helped my future?",
+    "What distracted me the most today?",
+    "What do I need to stop doing?",
+    "What do I need to start doing?",
+    "What is one small win I had today?",
+    "What fear is controlling me right now?",
+    "What is something I understood better today?",
+    "Who made me feel good today?",
+    "Who did I treat well today?",
+    "What conversation stayed in my mind?",
+    "What did I feel but not say?",
+    "What am I proud of even if it is small?",
+    "What is one thing I can do better tomorrow?",
+    "What kind of person was I today?",
+    "What do I want to remember from today?"
+]
+    question = random.choice(questions)
+    print(f"---> Question : {question} <---")
+    answer = input(">>> enter the answer : ")
+    print("---> Result <---")
+    print(f"--> answer : {answer} <--")
+    xp = random.randint(55,98)
+    print(f"--> The XP gain is {xp} XP <--")
+elif choice == 3:
+    print("---> Mood checker <---")
+    answer = input(">>> enter a sentence about your mood : ")
+    if "sad" in answer.lower() or "bad" in answer.lower():
+        print("---> try to comfort yourself and have some time of rest <---")
+    elif "good" in answer.lower() or "happy" in answer.lower():
+        print("---> that s a good thing to knoww wish you always <---")
+else:
+    print("??? your choice is not that good ???")
+"""
+
