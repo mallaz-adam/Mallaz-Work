@@ -1,12 +1,33 @@
 #---- Expense Tracker ----:
 import csv
 from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent
+
+file_path = BASE_DIR / "expense.csv"
 
 def load_data(file_path):
-    pass
+    with open(file_path,"r",encoding="utf-8",newline="") as file:
+        reader = csv.DictReader(file)
+        data = []
 
-def save_data(file_path):
-    pass
+        for expense in reader:
+            expense["id"] = int(expense["id"])
+            expense["amount"] = float(expense["amount"])
+
+            data.append(expense)
+        return data
+
+        
+    
+    
+
+def save_data(file_path,data):
+    fildes_name = ["id","category","desciption","amount"]
+    with open(file_path,"w",encoding="utf-8",newline="") as file:
+        writer = csv.DictWriter(file,fieldnames = fildes_name) 
+
+        writer.writeheader()
+        writer.writerows(data)
 
 #------ DATA -------:
 expenses = [
@@ -118,9 +139,6 @@ def display_expense(data):
     print("-"*25)
 
 
-def calculate_total(data):
-    amount = [amounts["amount"] for amounts in data]
-    return sum(amount)
 
 #----- Search by ID -----:
 def find_ID(data,ID):
@@ -130,10 +148,77 @@ def find_ID(data,ID):
     return None
 
 def search_expense(data):
-     print("-"*25)
-     print("---> Searching ID <---")
-     
-     print("-"*25)
+    print("-"*25)
+    print("---> Searching ID <---")
+    while True:
+        try:
+          ID_find = int(input(">>> enter The expense you want to search for : "))
+          index = find_ID(data,ID_find)
+        except ValueError:
+          print("??? Your ID must be an integer ???")
+          continue
+
+        if index is None:
+            print("??? The ID is not found ???")
+            continue
+
+        print("---> ID is found <---")
+        break
+
+    expense = data[index]
+    print("=" * 20)
+    print(f"----> ID Expense : {expense["id"]} <----")
+    print(f"---> Category : {expense["category"]} <---")
+    print(f"---> Description : {expense["desciption"]} <---")
+    print(f"---> Amount : {expense["amount"]} MAD <---")
+    print("=" * 20)
+
+ 
+    print("-"*25)
+
+#----- Expense analysis -----:
+def calculate_total(data):
+    amount = [amounts["amount"] for amounts in data]
+    return sum(amount)
+
+def average_expense(data,total_expense):
+    return (total_expense / len(data))
+
+def expenses_above_average(data,average):
+    expenses_above = []
+    for expense in data:
+        if expense["amount"] > average:
+            expenses_above.append(expense["id"])
+
+    if not expenses_above:
+        return None
+    else:
+        return expenses_above
+
+
+def most_three_expensive(data):
+    if len(data) < 3:
+        return None
+
+    list_amount = [{"id" : amount["id"] , "amount" : amount["amount"]} for amount in data]
+    list_top_expenses = []
+
+    for i in range(3):
+        max_expense = list_amount[0]
+        index = 0
+        for i , item in enumerate(list_amount):
+            if item["amount"] > max_expense["amount"]:
+                max_expense = item
+                index = i
+
+        list_top_expenses.append(max_expense)
+        list_amount.pop(index)
+
+
+    
+            
+    return list_top_expenses
+
 
 
 
