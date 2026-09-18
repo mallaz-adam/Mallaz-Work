@@ -1,0 +1,16 @@
+id,category,desciption,amount
+1,Food,Breakfast,22.5
+2,Transport,Taxi,35.0
+3,Study,Notebook,18.75
+4,Food,Lunch,48.0
+5,Entertainment,Cinema,70.0
+6,Transport,Bus,8.0
+7,Study,Python Book,120.0
+8,Food,Coffee,16.5
+9,Health,Pharmacy,55.0
+10,Shopping,T-Shirt,95.0
+11,Food,Dinner,82.25
+12,Study,USB Drive,65.0
+13,Transport,Train Ticket,45.0
+14,Entertainment,Video Game,150.0
+15,Food,Juice,12.0

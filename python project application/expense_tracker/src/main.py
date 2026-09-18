@@ -1,21 +1,27 @@
 #---- Expense Tracker ----:
 import csv
 from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent
 
-file_path = BASE_DIR / "expense.csv"
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+file_path = BASE_DIR / "data" / "expense.csv"
 
 def load_data(file_path):
-    with open(file_path,"r",encoding="utf-8",newline="") as file:
-        reader = csv.DictReader(file)
-        data = []
+    try:
+      with open(file_path,"r",encoding="utf-8",newline="") as file:
+         reader = csv.DictReader(file)
+         data = []
 
-        for expense in reader:
+         for expense in reader:
             expense["id"] = int(expense["id"])
             expense["amount"] = float(expense["amount"])
 
             data.append(expense)
-        return data
+      print("---> Your data is Back <---")
+      return data
+    except FileNotFoundError:
+         print("---> Your DATA will be saved after your first exprience <---")
+         return []
 
         
     
@@ -29,58 +35,6 @@ def save_data(file_path,data):
         writer.writeheader()
         writer.writerows(data)
 
-#------ DATA -------:
-expenses = [
-    {
-        "id": 1,
-        "category": "Food",
-        "desciption": "Lunch",
-        "amount": 45.50
-    },
-    {
-        "id": 2,
-        "category": "Transport",
-        "desciption": "Taxi",
-        "amount": 30.00
-    },
-    {
-        "id": 3,
-        "category": "Study",
-        "desciption": "Notebook",
-        "amount": 22.75
-    },
-    {
-        "id": 4,
-        "category": "Food",
-        "desciption": "Coffee",
-        "amount": 18.00
-    },
-    {
-        "id": 5,
-        "category": "Entertainment",
-        "desciption": "Cinema",
-        "amount": 70.00
-    },
-    {
-        "id": 6,
-        "category": "Transport",
-        "desciption": "Bus",
-        "amount": 8.00
-    },
-    {
-        "id": 7,
-        "category": "Food",
-        "desciption": "Dinner",
-        "amount": 85.25
-    },
-    {
-        "id": 8,
-        "category": "Study",
-        "desciption": "Python Book",
-        "amount": 120.00
-    }
-]
-# --------------------------------
 
 
 def add_expense(data):
@@ -188,7 +142,7 @@ def expenses_above_average(data,average):
     expenses_above = []
     for expense in data:
         if expense["amount"] > average:
-            expenses_above.append(expense["id"])
+            expenses_above.append(expense["amount"])
 
     if not expenses_above:
         return None
@@ -220,7 +174,81 @@ def most_three_expensive(data):
     return list_top_expenses
 
 
+def analyse_Part(data):
+    print("-"*25)
+    print("----> Analyse Expense <----")
+    if not data:
+        print("--> There s no data saved Yet <---")
+    else:
+        print(f"---> Total spending :  {calculate_total(data)} MAD <---")
+        sum_Data = calculate_total(data)
+        print(f"---> Average expense : {average_expense(data,sum_Data):.2f} MAD <---")
+        total = [amount["amount"] for amount in data]
+        print(f"---> Highest expense amount : {max(total)} MAD <---")
+        print(f"---> lowest expense amount : {min(total)} MAD <---")
+        print("---> Three highest expenses <---")
+        list_analyse = most_three_expensive(data)
+        print("-"*15)
+        if list_analyse is not None:
+          for item in list_analyse:
+            print(f"---> ID : {item["id"]} - amount : {item["amount"]} <---")
+        else:
+           print("??? there s no much expenses ???")
+        print("-"*15)
+        print("---> Expense amounts above average <---")
+        list_above_average = expenses_above_average(data,average_expense(data,sum_Data))
+        if list_above_average is not None:
+            for i,item in enumerate(list_above_average,1):
+                print(f"---> {i} : {item} <---")
+        
+        print("-"*15)
+        
+        print("-"*25)
 
+#------ Program Start ------:
+Menu = ["Add Expense","Display Expenses","Search Expense","Analyse Expenses","Back"]
+print("="*30)
+print("----> Expense Tracker <----")
+print("="*30)
+expenses = load_data(file_path)
+while True:
 
-def main_menu():
-    pass
+    print("-" * 25)
+    print("---> Menu <---")
+
+    for i, item in enumerate(Menu, 1):
+        print(f"--> [{i}] : {item} <--")
+
+    print("-" * 25)
+
+    while True:
+        try:
+            choice = int(input(">>> enter your choice : "))
+        except ValueError:
+            print("??? Your choice must be an int ???")
+            continue
+
+        break
+
+    match choice:
+        case 1:
+            add_expense(expenses)
+
+        case 2:
+            display_expense(expenses)
+
+        case 3:
+            search_expense(expenses)
+
+        case 4:
+            analyse_Part(expenses)
+
+        case 5:
+            print("---> Your Data will be saved, See You <---")
+            save_data(file_path, expenses)
+            break
+
+        case _:
+            print("??? False Input, Try again ???")
+
+print("-" * 25)
