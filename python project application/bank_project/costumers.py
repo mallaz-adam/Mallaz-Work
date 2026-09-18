@@ -1,5 +1,5 @@
 #----- Data strucure -----:
-import csv
+import csv 
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -51,15 +51,36 @@ accounts = [
     }
 ]
 def returning_data(file_path):
-    pass
+    try:
+     with open(file_path,"r",encoding="utf-8",newline="") as file:
+       reader = csv.DictReader(file)
+       data = []
+
+       for item in reader:
+          item["status"] = item["status"] == "True"
+          item["account_id"] = int(item["account_id"])
+          item["balance"] = float(item["balance"])
+
+          data.append(item)
+       print("----> DATA is Back <----")
+       return data
+    except FileNotFoundError:
+       print("??? The DATA will Be Saved after your first use ???")
+       return []
+    
+          
 def save_data(file_path):
     pass
 
 def returning_transactions_data(file_path_two):
-    with open(file_path_two,"r",encoding="utf-8") as file:
+   try:
+     with open(file_path_two,"r",encoding="utf-8") as file:
        reader = csv.DictReader(file)
        data = list(reader)
-    return data
+   except FileNotFoundError:
+      print("---> File Not Found , new list was created  <---")
+      data = []
+   return data
        
 #---- creating account ----:
 
@@ -177,15 +198,50 @@ def withdraw(account):
     print("-"*25)
 
 def deposit(account):
-    pass
+    print("-"*25)
+    print("---> Deposit <---")
+    while True:
+       try:
+          amount = float(input(">>> enter the amount you want to deposit to your account : "))
+       except ValueError:
+          print("??? The amount must be Float ???")
+          continue
+
+       if amount <= 0:
+          print("??? Amount must be positive and greater than 0 ???")
+          continue
+
+       break
+
+    account["balance"] += amount
+    print(f"---> You have deposit {amount} MAD to your account <---")
+    transactions_saving("deposit",account["account_id"],amount)
+    print("-"*25)
+    
 
 def view_balance(account):
     pass
 
 def transactions_saving(type,id,amount):
-   pass
-   
-   
+   transactions = returning_transactions_data(TRANSACTIONS_FILE)
+
+   ids = [int(idss["transaction_id"]) for idss in transactions]
+
+   New_id = max(ids) + 1 if ids else 1
+
+   transaction = {
+      "transaction_id" : New_id,
+      "account_id" : id,
+      "type" : type,
+      "amount" : amount
+   }
+
+   transactions.append(transaction)
+   fildes_name = ["transaction_id","account_id","type","amount"]
+   with open(TRANSACTIONS_FILE,"w",encoding="utf-8",newline="") as file:
+      Writer = csv.DictWriter(file,fieldnames = fildes_name)
+      Writer.writeheader()
+      Writer.writerows(transactions)
    
 #---- Program start ----:
 first_Menu = ["Creat account","login","Back"]
