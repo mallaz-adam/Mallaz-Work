@@ -6,50 +6,6 @@ BASE_DIR = Path(__file__).resolve().parent
 ACCOUNTS_FILE = BASE_DIR / "data.csv"
 TRANSACTIONS_FILE = BASE_DIR / "transactions.csv"
 
-file_path = "accounts.csv"
-file_path_transactions = "transactions.csv"
-accounts = [
-    {
-        "account_id": 1001,
-        "name": "Adam",
-        "email": "adam@gmail.com",
-        "password": "1234",
-        "balance": 2500,
-        "status": True
-    },
-    {
-        "account_id": 1002,
-        "name": "Sara",
-        "email": "sara@gmail.com",
-        "password": "5678",
-        "balance": 1200,
-        "status": False
-    },
-    {
-        "account_id": 1003,
-        "name": "Omar",
-        "email": "omar@gmail.com",
-        "password": "9999",
-        "balance": 5000,
-        "status": True
-    },
-    {
-        "account_id": 1004,
-        "name": "Lina",
-        "email": "lina@gmail.com",
-        "password": "4321",
-        "balance": 0,
-        "status": False
-    },
-    {
-        "account_id": 1005,
-        "name": "Youssef",
-        "email": "youssef@gmail.com",
-        "password": "1111",
-        "balance": 800,
-        "status": True
-    }
-]
 def returning_data(file_path):
     try:
      with open(file_path,"r",encoding="utf-8",newline="") as file:
@@ -69,8 +25,14 @@ def returning_data(file_path):
        return []
     
           
-def save_data(file_path):
-    pass
+def save_data(file_path,data):
+   fildes_names = ["account_id" , "name" ,  "email",  "password" , "balance" , "status"]
+   with open(file_path,"w",encoding="utf-8",newline="") as file:
+
+      writer = csv.DictWriter(file,fildesnames = fildes_names)
+      writer.writeheader()
+      writer.writerows(data)
+
 
 def returning_transactions_data(file_path_two):
    try:
@@ -194,6 +156,7 @@ def withdraw(account):
          print(f"---> You withdraw {amount} MAD  <---")
          account["balance"] -= amount
          transactions_saving("withdraw",account["account_id"],amount)
+         save_data(ACCOUNTS_FILE,accounts)
 
     print("-"*25)
 
@@ -216,11 +179,17 @@ def deposit(account):
     account["balance"] += amount
     print(f"---> You have deposit {amount} MAD to your account <---")
     transactions_saving("deposit",account["account_id"],amount)
+    save_data(ACCOUNTS_FILE,accounts)
     print("-"*25)
     
 
 def view_balance(account):
-    pass
+    print("-"*25)
+    print("----> Balance <----")
+    print(f"---> Your current balance : {account['balance']} MAD <---")
+    print("-"*25)
+
+
 
 def transactions_saving(type,id,amount):
    transactions = returning_transactions_data(TRANSACTIONS_FILE)
@@ -249,6 +218,8 @@ second_Menu = ["withdraw","deposit","view balance","Back"]
 print("=" * 30)
 print("-----> MALLAZ BANK <-----")
 print("=" * 30)
+accounts = returning_data(ACCOUNTS_FILE)
+print("-"*20)
 while True:
    print("----> Menu <----")
    for i , item in enumerate(first_Menu,1):
@@ -271,18 +242,23 @@ while True:
           index = login(accounts)
           if index is None:
              continue
+          if not accounts[index]["status"]:
+             print("---> You need to wait for your request to be accepted <---")
+             continue 
       case 3:
          print("---> Thank you , for using our service <---")
+         save_data(ACCOUNTS_FILE,accounts)
          break
       case _:
          print("??? Wrong Input , try again ???")
+         continue
 
    user = accounts[index]
-   print(f"----> Welcome to your account again {user["name"]} <----")
+   print(f"----> Welcome to your account again {user['name']} <----")
    while True:
       print("----> Menu <----")
       for i , item in enumerate(second_Menu,1):
-         print(f"---> {i} : {item} <---")
+         print(f"---> [{i}] : {item} <---")
       while True:
          try:
           choice = int(input(">>> enter your choice : "))
@@ -293,21 +269,17 @@ while True:
       
       match choice:
          case 1:
-            pass
+            withdraw(user)
          case 2:
-            pass
+            deposit(user)
          case 3:
-            pass
+            view_balance(user)
          case 4:
-            pass
+            print("---> Thank you , your data will be saved <---")
+            break
          case _:
-            pass
-         
-      
+            print("??? False Input , Try again ???")
+            continue
+   print("-"*20)
 
-      
-      
-
-      
-   
 print("=" * 30)
