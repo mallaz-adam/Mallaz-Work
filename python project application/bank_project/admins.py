@@ -12,7 +12,7 @@ accounts = [
         "email": "adam@gmail.com",
         "password": "1234",
         "balance": 2500.0,
-        "status": True
+        "status": False
     },
     {
         "account_id": 1002,
@@ -87,6 +87,21 @@ def search_ID(Id,data):
             return i
     return None
 
+def all_accounts_approved(data):
+    for item in data:
+        if not item["status"]:
+            return False
+    return True
+
+def highest_account(data):
+   max_account = (data[0]["account_id"],data[0]["balance"])
+   for item in data:
+      if item["balance"] > max_account[1]:
+         max_account = (item["account_id"],item["balance"])
+   return max_account
+
+def lowest_account(data):
+    pass
 def search_account(data):
     print("-"*25)
     print("---> Search account <---")
@@ -113,16 +128,93 @@ def search_account(data):
 
     print("-"*25)
 
-search_account(accounts)
-
-def approve_account():
-    pass
-
-def remove_account():
-    pass
-
-def analyse_accounts():
-    pass
 
 
+def approve_account(data):
+    print("-"*25)
+    print("---> Approve account <---")
+    if not all_accounts_approved(data):
+     while True:
+         try:
+          Id = int(input(">>> enter the ID you want to approve their request : "))
+          index = search_ID(Id,data)
+         except ValueError:
+          print("??? The Id must be an int , try again ???")
+          continue
+
+         if index is None:
+            print("??? This is not found , Try again ???")
+            continue
+
+         if data[index]["status"]:
+            print("??? This acocunt is already , search for another Account ???")
+            continue
+         break
+     user = data[index]
+     choice = input(f">>> Are you sure about approving account with ID [{user['account_id']}] [Y/N] ? : ").strip().upper() == "Y"
+     if choice:
+         user["status"] = True
+         #----- DATA SAVING -----:
+         print("---> This account was approved <---")
+     else:
+        print("---> Nothing has been changed , See you <---")
+      
+    else:
+        print("---> All accounts are approved , See you <---")
+
+    print("-"*25)
+
+def remove_account(data):
+    print("-"*25)
+    print("---> Remove Account <---")
+    while True :
+        try:
+          Id = int(input(">>> enter the ID you want to remove : "))
+          index = search_ID(Id,data)
+        except ValueError:
+          print("??? ID must be an int , try again ???")
+          continue
+
+        if index is None:
+           print("??? Index is Not found , try againn ???")
+           continue
+
+        break
+    user = data[index]
+    Id_ = user["account_id"]
+    choice = input(f">>> Are you sure about removing account with ID [{Id_}] [Y/N] ? : ").strip().upper() == "Y"
+    if choice:
+       data.pop(index)
+       print(f"---> account with ID [{Id_}] is removed <---")
+       #----- DATA SAVING -----:
+    else:
+       print("---> Nothing has been changed , See you <---")
+
+        
+    print("-"*25)
+
+def analyse_accounts(data):
+    print("-"*25)
+    print("---> Analyse Accounts <---")
+    print(f"--> Number of accounts : {len(data)} <---")
+    #----- calcul how many accounts are approved and not ----:
+    counter = {"approved" : 0,
+               "not_approved" : 0}
+    
+    total_balance = 0
+    for item in data:
+       if item["status"]:
+          counter["approved"] += 1
+       else :
+          counter["not_approved"] += 1
+       total_balance += item["balance"]
+
+    print(f"--> approved accounts  [{counter['approved']}] - Not aprproved  [{counter['not_approved']}] <--")
+    print(f"--> total money across all accounts : {total_balance} <--")
+    average = total_balance / len(data)
+    print(f"--> Average of total balance : {average:.2f} <--")
+    account = highest_account(data)
+    print(f"--> Highest Id : {account[0]} - Highest balance : {account[1]} <---")
+    
+    print("-"*25)
 
