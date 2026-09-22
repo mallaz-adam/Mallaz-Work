@@ -1,5 +1,6 @@
 #---- Data strucures ----:
 from pathlib import Path
+import csv
 BASE_DIR = Path(__file__).resolve().parent
 
 ACCOUNTS_FILE = BASE_DIR / "data.csv"
@@ -55,10 +56,80 @@ accounts = [
         "status": False
     }
 ]
+transactions = [
+    {
+        "transaction_id": 1,
+        "account_id": 1001,
+        "type": "deposit",
+        "amount": 500.0
+    },
+    {
+        "transaction_id": 2,
+        "account_id": 1001,
+        "type": "withdraw",
+        "amount": 200.0
+    },
+    {
+        "transaction_id": 3,
+        "account_id": 1002,
+        "type": "deposit",
+        "amount": 1200.0
+    },
+    {
+        "transaction_id": 4,
+        "account_id": 1003,
+        "type": "withdraw",
+        "amount": 300.0
+    },
+    {
+        "transaction_id": 5,
+        "account_id": 1001,
+        "type": "deposit",
+        "amount": 750.0
+    },
+    {
+        "transaction_id": 6,
+        "account_id": 1002,
+        "type": "withdraw",
+        "amount": 150.0
+    }
+]
 
 def load_accounts(file_path):
-    pass
+    try:
+      with open(file_path,"r",encoding="utf-8",newline="") as file:
+       reader = csv.DictReader(file)
+       data = []
+       for line in reader:
 
+          line["account_id"] = int(line["account_id"])
+          line["balance"] = float(line["balance"])
+          line["status"] = line["status"] == "True"
+
+          data.append(line)
+          
+       return data
+    except FileNotFoundError:
+      print("??? Program need accounts to work , try again later ???")
+      return None
+def load_transactions(file_path):
+   try:
+     with open(file_path,"r",encoding="utf-8") as file:
+       reader = csv.DictReader(file)
+       data = []
+       for line in reader:
+
+          line["transaction_id"] = int(line["transaction_id"])
+          line["account_id"] = int(line["account_id"])
+          line["amount"] = float(line["transaction_id"])
+
+          data.append(line)
+       return data
+
+   except FileNotFoundError:
+      print("---> Transaction will be saved when someone use his account <---")
+      return []
+         
 def view_not_accepted_account(data):
     print("-"*25)
     print("---> Not accepted Accounts <---")
@@ -100,8 +171,13 @@ def highest_account(data):
          max_account = (item["account_id"],item["balance"])
    return max_account
 
-def lowest_account(data):
-    pass
+def lowest_account(data,max_account):
+   lowest_account = (max_account[0],max_account[1])
+   for account in data:
+      if account["balance"] < lowest_account[1]:
+         lowest_account = (account["account_id"],account["balance"])
+   return lowest_account
+    
 def search_account(data):
     print("-"*25)
     print("---> Search account <---")
@@ -193,9 +269,10 @@ def remove_account(data):
         
     print("-"*25)
 
-def analyse_accounts(data):
+def analyse_accounts(data,transaction_data):
     print("-"*25)
     print("---> Analyse Accounts <---")
+    print("="*30)
     print(f"--> Number of accounts : {len(data)} <---")
     #----- calcul how many accounts are approved and not ----:
     counter = {"approved" : 0,
@@ -210,11 +287,61 @@ def analyse_accounts(data):
        total_balance += item["balance"]
 
     print(f"--> approved accounts  [{counter['approved']}] - Not aprproved  [{counter['not_approved']}] <--")
-    print(f"--> total money across all accounts : {total_balance} <--")
+    print(f"--> total money across all accounts : [{total_balance}] MAD <--")
     average = total_balance / len(data)
-    print(f"--> Average of total balance : {average:.2f} <--")
+    print(f"--> Average of total balance : [{average:.2f}] MAD <--")
     account = highest_account(data)
-    print(f"--> Highest Id : {account[0]} - Highest balance : {account[1]} <---")
+    print(f"--> Highest Id : [{account[0]}] - Highest balance : [{account[1]}] MAD  <--")
+    lowest = lowest_account(data,account)
+    print(f"--> Lowest Id : [{lowest[0]}] - Lowest Balance [{lowest[1]}] MAD <--")
+    print("="*30)
+    print("---> Transactions analyse <---")
+    #----- calcul total transactions , total withdrawals , total depostis ----:
+    total_transactions = 0
+    total_deposits = 0
+    total_withdrawals = 0
+
+    for transaction in transaction_data:
+       total_transactions += transaction["amount"]
+
+       if transaction["type"] == "deposit":
+          total_deposits += transaction["amount"]
+
+       else:
+          total_withdrawals += transaction["amount"]
+
+    print(f"--> Total Transactions : [{total_transactions}] MAD <--")
+    print(f"--> Total Deposits : [{total_deposits}] MAD <--")
+    print(f"--> Total Withdrawals [{total_withdrawals}] MAD <---")
+    #----- Find Largest Deposit -----:
+    all_deposits = [amount["amount"] for amount in transaction_data if amount["type"] == "deposit"]
+    all_withdrawls = [amount["amount"] for amount in transaction_data if amount["type"] == "withdraw"]
     
+ 
+
+    print(f"---> Largest Deposit : [{max(all_deposits)}] MAD <---")
+    print(f"---> Largest Withdraw : [{max(all_withdrawls)}] MAD <---")
+
+    #---- Find the account has the most transactions ----:
+    accounts_transactions = {}
+   
+    for transaction in transaction_data:
+          account_id = transaction["account_id"]
+   
+          if account_id not in accounts_transactions:
+             accounts_transactions[account_id] = 1
+          else:
+             accounts_transactions[account_id] += 1
+    largest_id = max(accounts_transactions, key=accounts_transactions.get)
+    print(f"---> Id of the account who has most transactions : {largest_id} <---")
+   
+    
+
+
+    
+    
+    print("="*30)
+
     print("-"*25)
+analyse_accounts(accounts,transactions)
 
