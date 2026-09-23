@@ -1,0 +1,4 @@
+task_id,title,status,priority
+1,Study Python,False,high
+2,Read 10 pages,True,medium
+3,Practice maths,False,high
