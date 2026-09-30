@@ -318,21 +318,22 @@ while True:
      break
   match choice:
      case 1:
-        pass
+        add_task(tasks)
      case 2:
-        pass
+        Display_tasks(tasks)
      case 3:
-        pass
+        complete_task(tasks)
      case 4:
-        pass
+        Remove_task(tasks)
      case 5:
-        pass
+        Search(tasks)
      case 6:
-        pass
-     case 7:
-        pass
+        print("---> Thank you for using Our application <---")
+        break
      case _:
         print("??? Wrong Input , try again ???")
+        continue
+print("="*30)      
    
 
     
